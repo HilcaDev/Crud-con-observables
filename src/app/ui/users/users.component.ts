@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit, ViewChild } from '@angular/core';
+import { Component, Inject, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { IUserRepository } from '../../domain/users/users.repository';
 import { IUserDto } from '../../domain/users/user.dto';
 import { FormBuilder, FormGroup } from '@angular/forms';
@@ -14,6 +14,8 @@ import Swal, { SweetAlertResult } from 'sweetalert2';
   styleUrls: ['./users.component.scss']
 })
 export class UsersComponent implements OnInit {
+
+  @ViewChild('buttonCloseModalRegister') buttonModalRegister!: ElementRef;
 
   userData!: IUserDto[];
   formCreateUserData!: FormGroup;
@@ -33,7 +35,11 @@ export class UsersComponent implements OnInit {
     this.formCreateUserData = this.formBuilder.group(UsersField);
   }
 
-  fetchUserData() {
+  closeModal(): void{
+    this.buttonModalRegister.nativeElement.click();
+  }
+
+  fetchUserData():void {
     this.userService.getAll().subscribe((response: any) =>
       this.userData = response.body
     );
@@ -42,6 +48,7 @@ export class UsersComponent implements OnInit {
   createUserData(): void {
     this.userService.createUser(this.formCreateUserData.value).subscribe((response: HttpResponse<IUserDto>) => {
       if (response.status === HttpStatusCode.Created) {
+        this.closeModal();
         Swal.fire(userCreatedUser);
         this.fetchUserData();
       }
@@ -56,6 +63,7 @@ export class UsersComponent implements OnInit {
     this.userService.updateUser(this.formCreateUserData.value).subscribe((response: HttpResponse<IUserDto>) => {
       console.log(response);
       if (response.status === HttpStatusCode.Ok) {
+        this.closeModal();
         Swal.fire(userEdit);
         this.fetchUserData();
       }
@@ -69,10 +77,7 @@ export class UsersComponent implements OnInit {
   showModalWithUserData(user: IUserDto): void {
     this.showErrorUserService = false;
     this.isEditUser = true;
-    console.log('editar', this.isEditUser);
-    this.userService.getUserById(user.id!).subscribe((response: HttpResponse<any>) =>
-      this.formCreateUserData.patchValue(response.body)
-    );
+    this.formCreateUserData.patchValue(user)
   }
 
   deleteUserData(user: IUserDto): void {

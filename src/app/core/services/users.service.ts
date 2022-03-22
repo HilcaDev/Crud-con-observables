@@ -15,10 +15,6 @@ export class UsersService implements IUserRepository {
     return this.httpClient.post<IUserDto>(`${environment.baseUrl}/public/v2/users`, payload, { observe: 'response' });
   }
 
-  getUserById(id: number): Observable<HttpResponse<any>> {
-    return this.httpClient.get<any>(`${environment.baseUrl}/public/v2/users/${id}`, { observe: 'response' })
-  }
-
   getAll(): Observable<HttpResponse<IUserDto[]>> {
     return this.httpClient.get<IUserDto[]>(`${environment.baseUrl}/public/v2/users`, { observe: 'response' })
   }
