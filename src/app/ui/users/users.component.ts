@@ -54,7 +54,7 @@ export class UsersComponent implements OnInit {
   editUserData(): void {
     console.log('entra')
     this.userService.updateUser(this.formCreateUserData.value).subscribe((response: HttpResponse<IUserDto>) => {
-      console.log(response.status);
+      console.log(response);
       if (response.status === HttpStatusCode.Ok) {
         Swal.fire(userEdit);
         this.fetchUserData();
